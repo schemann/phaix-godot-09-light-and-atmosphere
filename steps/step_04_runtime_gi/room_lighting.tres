@@ -1,0 +1,10 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://steps/step_04_runtime_gi/room_lighting.gd" id="1_lighting"]
+
+[resource]
+script = ExtResource("1_lighting")
+energy = Array[float]([2.8, 3.2, 2.8, 2.8, 3.4, 3.8, 3.2])
+shadows = Array[bool]([false, false, false, false, false, true, false])
+fog_energy = Array[float]([1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.5])
+reach = 0.5

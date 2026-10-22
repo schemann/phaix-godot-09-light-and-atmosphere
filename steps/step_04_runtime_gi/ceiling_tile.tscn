@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://steps/step_04_runtime_gi/kit/kit_ceiling_2x2.glb" id="1_tile"]
+
+[node name="CeilingTile" instance=ExtResource("1_tile")]
+
+[node name="kit_ceiling_2x2" parent="." index="0"]
+layers = 2

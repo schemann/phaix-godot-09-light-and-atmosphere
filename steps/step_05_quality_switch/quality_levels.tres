@@ -1,0 +1,12 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://steps/step_05_quality_switch/quality_levels.gd" id="1_levels"]
+
+[resource]
+script = ExtResource("1_levels")
+names = Array[String](["Low", "Medium", "High"])
+gi = Array[bool]([false, false, true])
+fog = Array[bool]([false, true, true])
+shadows = Array[bool]([false, true, true])
+glow = Array[bool]([true, true, true])
+start_level = 2

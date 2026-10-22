@@ -1,0 +1,362 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://steps/step_05_quality_switch/level.gd" id="1_level"]
+
+[ext_resource type="Script" path="res://steps/step_05_quality_switch/debug_map.gd" id="2_map"]
+
+[ext_resource type="Script" path="res://steps/step_05_quality_switch/hud.gd" id="3_hud"]
+
+[ext_resource type="Script" path="res://steps/step_05_quality_switch/seed_entry.gd" id="4_entry"]
+
+[ext_resource type="Script" path="res://steps/step_05_quality_switch/gizmos.gd" id="5_gizmos"]
+
+[ext_resource type="Script" path="res://steps/step_05_quality_switch/lines.gd" id="6_lines"]
+
+[ext_resource type="Script" path="res://steps/step_05_quality_switch/generation_watch.gd" id="7_watch"]
+
+[ext_resource type="Script" path="res://steps/step_05_quality_switch/quality.gd" id="8_quality"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.05, 0.05, 0.06, 0.82)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 48.0
+content_margin_top = 28.0
+content_margin_right = 48.0
+content_margin_bottom = 28.0
+
+[sub_resource type="Environment" id="Environment_interior"]
+background_mode = 1
+background_color = Color(0.03, 0.03, 0.035, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.52, 0.5, 0.47, 1)
+ambient_light_energy = 0.7
+reflected_light_source = 1
+tonemap_mode = 4
+tonemap_agx_contrast = 1.5
+glow_enabled = true
+glow_intensity = 0.6
+glow_hdr_threshold = 1.0
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.012
+volumetric_fog_albedo = Color(0.92, 0.92, 0.94, 1)
+volumetric_fog_anisotropy = 0.4
+volumetric_fog_length = 24.0
+volumetric_fog_ambient_inject = 0.1
+volumetric_fog_sky_affect = 0.0
+sdfgi_enabled = true
+sdfgi_use_occlusion = true
+sdfgi_read_sky_light = false
+sdfgi_y_scale = 0
+sdfgi_energy = 1.6
+
+[node name="Main" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_interior")
+
+[node name="Level" type="Node3D" parent="."]
+script = ExtResource("1_level")
+
+[node name="Gizmos" type="Node3D" parent="." node_paths=PackedStringArray("level")]
+visible = false
+script = ExtResource("5_gizmos")
+level = NodePath("../Level")
+
+[node name="Lines" type="MeshInstance3D" parent="Gizmos"]
+script = ExtResource("6_lines")
+
+[node name="Watch" type="Node3D" parent="." node_paths=PackedStringArray("level")]
+script = ExtResource("7_watch")
+level = NodePath("../Level")
+
+[node name="Lines" type="MeshInstance3D" parent="Watch"]
+script = ExtResource("6_lines")
+
+[node name="Camera" type="Camera3D" parent="Watch"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 60, 0)
+cull_mask = 1048573
+projection = 1
+size = 24.0
+far = 200.0
+
+[node name="Screen" type="CanvasLayer" parent="Watch"]
+
+[node name="Report" type="Label" parent="Watch/Screen"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -260.0
+offset_right = 760.0
+offset_bottom = -24.0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 32
+text = "Seed 42"
+vertical_alignment = 2
+
+[node name="HUD" type="CanvasLayer" parent="." node_paths=PackedStringArray("level")]
+script = ExtResource("3_hud")
+level = NodePath("../Level")
+
+[node name="DebugMap" type="Control" parent="HUD" node_paths=PackedStringArray("level")]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 316.0
+offset_bottom = 316.0
+clip_contents = true
+mouse_filter = 2
+script = ExtResource("2_map")
+level = NodePath("../../Level")
+
+[node name="Stats" type="VBoxContainer" parent="HUD"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -376.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 245.0
+grow_horizontal = 0
+mouse_filter = 2
+
+[node name="RoomLabel" type="Label" parent="HUD/Stats"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 40
+text = "Room 0 / 20"
+horizontal_alignment = 2
+
+[node name="KeysLabel" type="Label" parent="HUD/Stats"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 40
+text = "Keys 0"
+horizontal_alignment = 2
+
+[node name="TimeLabel" type="Label" parent="HUD/Stats"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 40
+text = "0:00.0"
+horizontal_alignment = 2
+
+[node name="BestLabel" type="Label" parent="HUD/Stats"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 40
+text = "Best -:--.-"
+horizontal_alignment = 2
+
+[node name="SeedLabel" type="Label" parent="HUD/Stats"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 40
+text = "Seed 42"
+horizontal_alignment = 2
+
+[node name="SeedHint" type="Label" parent="HUD/Stats"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.7)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 24
+text = "T  type a seed      C  copy it"
+horizontal_alignment = 2
+
+[node name="DebugHint" type="Label" parent="HUD/Stats"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.7)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 24
+text = "F3  gizmos      F4  watch it plan"
+horizontal_alignment = 2
+
+[node name="QualityHint" type="Label" parent="HUD/Stats"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.7)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 24
+text = "Q  quality"
+horizontal_alignment = 2
+
+[node name="MessageLabel" type="Label" parent="HUD"]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 0.72
+anchor_right = 0.5
+anchor_bottom = 0.72
+offset_left = -420.0
+offset_top = -34.0
+offset_right = 420.0
+offset_bottom = 34.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.45, 0.25, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 56
+text = "Locked: find the key"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MessageTimer" type="Timer" parent="HUD"]
+wait_time = 1.5
+one_shot = true
+
+[node name="NoticeLabel" type="Label" parent="HUD"]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 0.88
+anchor_right = 0.5
+anchor_bottom = 0.88
+offset_left = -420.0
+offset_top = -26.0
+offset_right = 420.0
+offset_bottom = 26.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 40
+text = "Seed copied: 42"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NoticeTimer" type="Timer" parent="HUD"]
+wait_time = 1.5
+one_shot = true
+
+[node name="QualityLabel" type="Label" parent="HUD"]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 0.1
+anchor_right = 0.5
+anchor_bottom = 0.1
+offset_left = -420.0
+offset_top = -26.0
+offset_right = 420.0
+offset_bottom = 26.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 40
+text = "Quality: High"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QualityTimer" type="Timer" parent="HUD"]
+wait_time = 1.5
+one_shot = true
+
+[node name="FinishPanel" type="PanelContainer" parent="HUD"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Rows" type="VBoxContainer" parent="HUD/FinishPanel"]
+layout_mode = 2
+
+[node name="FinishTitle" type="Label" parent="HUD/FinishPanel/Rows"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 72
+text = "Finished!"
+horizontal_alignment = 1
+
+[node name="FinishTime" type="Label" parent="HUD/FinishPanel/Rows"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 56
+text = "0:00.0"
+horizontal_alignment = 1
+
+[node name="NewBest" type="Label" parent="HUD/FinishPanel/Rows"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.18, 1)
+theme_override_font_sizes/font_size = 48
+text = "New best!"
+horizontal_alignment = 1
+
+[node name="FinishHint" type="Label" parent="HUD/FinishPanel/Rows"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.7)
+theme_override_font_sizes/font_size = 28
+text = "R  run again    N  next seed    T  type a seed"
+horizontal_alignment = 1
+
+[node name="SeedEntry" type="PanelContainer" parent="HUD" node_paths=PackedStringArray("level")]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.68
+anchor_right = 0.5
+anchor_bottom = 0.68
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+script = ExtResource("4_entry")
+level = NodePath("../../Level")
+
+[node name="Rows" type="VBoxContainer" parent="HUD/SeedEntry"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="HUD/SeedEntry/Rows"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 56
+text = "Type a seed"
+horizontal_alignment = 1
+
+[node name="Line" type="LineEdit" parent="HUD/SeedEntry/Rows"]
+custom_minimum_size = Vector2(760, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 56
+placeholder_text = "BLUE-FOX"
+alignment = 1
+max_length = 24
+select_all_on_focus = true
+
+[node name="Hint" type="Label" parent="HUD/SeedEntry/Rows"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.7)
+theme_override_font_sizes/font_size = 28
+text = "Enter  start the run      Esc  cancel"
+horizontal_alignment = 1
+
+[node name="Quality" type="Node" parent="." node_paths=PackedStringArray("world", "label", "timer")]
+script = ExtResource("8_quality")
+world = NodePath("../WorldEnvironment")
+label = NodePath("../HUD/QualityLabel")
+timer = NodePath("../HUD/QualityTimer")
+
+[connection signal="opened" from="HUD/SeedEntry" to="Level" method="_on_seed_entry_opened"]
+[connection signal="closed" from="HUD/SeedEntry" to="Level" method="_on_seed_entry_closed"]
+[connection signal="seed_submitted" from="HUD/SeedEntry" to="Level" method="use_seed"]
